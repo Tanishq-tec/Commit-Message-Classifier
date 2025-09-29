@@ -1,16 +1,14 @@
-import sklearn
 import streamlit as st
 import pandas as pd
-import pickle
+import joblib  # Use joblib instead of pickle for sklearn models
+import sklearn  # Ensure sklearn is imported first
 
-# ----------- Load Model and Vectorizer -----------
+# ----------- Load Model and Vectorizer with caching -----------
 @st.cache_resource
 def load_model():
     try:
-        with open("commit_classifier.pkl", "rb") as f:
-            model = pickle.load(f)
-        with open("vectorizer.pkl", "rb") as f:
-            vectorizer = pickle.load(f)
+        model = joblib.load("commit_classifier.joblib")
+        vectorizer = joblib.load("vectorizer.joblib")
         return model, vectorizer
     except Exception as e:
         st.error(f"❌ Error loading model/vectorizer: {e}")
@@ -38,7 +36,7 @@ with tab1:
                 X = vectorizer.transform([user_input])
                 prediction = model.predict(X)[0]
 
-                # Show probabilities if supported
+                # Show probabilities if available
                 if hasattr(model, "predict_proba"):
                     proba = model.predict_proba(X)[0]
                     st.success(f"**Prediction:** {prediction}")
