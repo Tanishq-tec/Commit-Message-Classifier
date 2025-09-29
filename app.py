@@ -1,14 +1,17 @@
+# -------------------------- app.py --------------------------
 import streamlit as st
 import pandas as pd
-import joblib  # Use joblib instead of pickle for sklearn models
-import sklearn  # Ensure sklearn is imported first
+import pickle
+import sklearn  # Ensure sklearn is available before unpickling
 
 # ----------- Load Model and Vectorizer with caching -----------
 @st.cache_resource
 def load_model():
     try:
-        model = joblib.load("commit_classifier.joblib")
-        vectorizer = joblib.load("vectorizer.joblib")
+        with open("commit_classifier.pkl", "rb") as f:
+            model = pickle.load(f)
+        with open("vectorizer.pkl", "rb") as f:
+            vectorizer = pickle.load(f)
         return model, vectorizer
     except Exception as e:
         st.error(f"❌ Error loading model/vectorizer: {e}")
@@ -18,7 +21,6 @@ model, vectorizer = load_model()
 
 # ----------- Streamlit Page Config -----------
 st.set_page_config(page_title="Commit Classifier", page_icon="📊", layout="centered")
-
 st.title("📊 Commit Message Classifier")
 st.write("This app predicts the category of commit messages using a trained ML model.")
 
@@ -36,7 +38,7 @@ with tab1:
                 X = vectorizer.transform([user_input])
                 prediction = model.predict(X)[0]
 
-                # Show probabilities if available
+                # Show probabilities if supported
                 if hasattr(model, "predict_proba"):
                     proba = model.predict_proba(X)[0]
                     st.success(f"**Prediction:** {prediction}")
