@@ -39,4 +39,3 @@ if st.button("Classify"):
             st.success(f"**Prediction:** {prediction}")
     else:
         st.warning("⚠️ Please enter a commit message before classifying.")
-```
