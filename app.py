@@ -1,4 +1,3 @@
-```python
 import streamlit as st
 import pandas as pd
 import pickle
@@ -96,4 +95,3 @@ with tab2:
 
         except Exception as e:
             st.error(f"❌ Error processing CSV: {e}")
-```
