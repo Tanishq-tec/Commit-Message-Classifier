@@ -1,20 +1,16 @@
 ```python
 import streamlit as st
 import pandas as pd
-
-# Try to import joblib safely
-try:
-    import joblib
-except ImportError:
-    st.error("❌ Missing dependency: joblib is not installed. Please add it to requirements.txt")
-    st.stop()
+import pickle
 
 # ----------- Load Model and Vectorizer -----------
 @st.cache_resource
 def load_model():
     try:
-        model = joblib.load("commit_classifier.pkl")
-        vectorizer = joblib.load("vectorizer.pkl")
+        with open("commit_classifier.pkl", "rb") as f:
+            model = pickle.load(f)
+        with open("vectorizer.pkl", "rb") as f:
+            vectorizer = pickle.load(f)
         return model, vectorizer
     except Exception as e:
         st.error(f"❌ Error loading model/vectorizer: {e}")
@@ -87,17 +83,5 @@ with tab2:
                     df = pd.concat([df, proba_df], axis=1)
 
                 st.success("✅ Predictions complete!")
-                st.dataframe(df, use_container_width=True)
-
-                # Option to download results
-                csv_download = df.to_csv(index=False).encode("utf-8")
-                st.download_button(
-                    "📥 Download Predictions as CSV",
-                    csv_download,
-                    "predictions.csv",
-                    "text/csv"
-                )
-
-        except Exception as e:
-            st.error(f"❌ Error processing CSV: {e}")
+                st.dataframe(df, use_con
 ```
