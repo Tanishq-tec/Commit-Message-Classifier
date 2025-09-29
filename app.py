@@ -1,5 +1,7 @@
 import streamlit as st
 import pickle
+import joblib
+
 
 # Load the model and vectorizer
 @st.cache_resource
