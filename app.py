@@ -1,3 +1,4 @@
+```python
 import streamlit as st
 import pandas as pd
 import pickle
@@ -82,4 +83,17 @@ with tab2:
                     df = pd.concat([df, proba_df], axis=1)
 
                 st.success("✅ Predictions complete!")
-                st.dataframe(df,use_container_width=True)
+                st.dataframe(df, use_container_width=True)
+
+                # Option to download results
+                csv_download = df.to_csv(index=False).encode("utf-8")
+                st.download_button(
+                    "📥 Download Predictions as CSV",
+                    csv_download,
+                    "predictions.csv",
+                    "text/csv"
+                )
+
+        except Exception as e:
+            st.error(f"❌ Error processing CSV: {e}")
+```
