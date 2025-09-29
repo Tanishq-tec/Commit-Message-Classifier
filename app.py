@@ -1,4 +1,3 @@
-```python
 import streamlit as st
 import pandas as pd
 import pickle
@@ -83,5 +82,4 @@ with tab2:
                     df = pd.concat([df, proba_df], axis=1)
 
                 st.success("✅ Predictions complete!")
-                st.dataframe(df, use_con
-```
+                st.dataframe(df,use_container_width=True)
