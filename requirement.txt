@@ -6,3 +6,4 @@ pandas==2.1.0
 plotly==5.20.0
 requests==2.31.0
 scikit-learn==1.5.1
+python-3.11.8
