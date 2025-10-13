@@ -37,10 +37,10 @@ vectorizer, model = load_models()
 # ----------------------------
 # Streamlit App UI
 # ----------------------------
-st.set_page_config(page_title="Commit Message Classifier", page_icon="🧠", layout="centered")
+st.set_page_config(page_title="Commit Priority Classifier", page_icon="🚦", layout="centered")
 
-st.title("🧠 Commit Message Classifier")
-st.write("This app predicts the category of a commit message using your trained ML model.")
+st.title("🚦 Commit Message Priority Classifier")
+st.write("This app predicts whether a commit message represents a **High**, **Medium**, or **Low** priority change based on your trained ML model.")
 
 st.markdown("---")
 
@@ -48,25 +48,50 @@ st.markdown("---")
 user_input = st.text_area(
     "✍️ Enter a commit message:",
     height=150,
-    placeholder="e.g., Fixed login bug in authentication module"
+    placeholder="e.g., Fixed major security vulnerability in authentication module"
 )
 
 # Prediction
-if st.button("🔍 Classify Commit"):
+if st.button("🔍 Predict Priority"):
     if user_input.strip():
         try:
             # Transform input and predict
             input_vec = vectorizer.transform([user_input])
             prediction = model.predict(input_vec)[0]
 
-            # Show prediction
-            st.success(f"✅ **Predicted Category:** {prediction}")
+            # ----------------------------
+            # Map model output to Priority
+            # ----------------------------
+            # Case 1: Model already outputs labels like 'high', 'medium', 'low'
+            # Case 2: Model outputs numeric labels (e.g., 0, 1, 2)
+            priority_mapping = {
+                0: "Low",
+                1: "Medium",
+                2: "High",
+                "low": "Low",
+                "medium": "Medium",
+                "high": "High"
+            }
 
-            # Optional: show confidence (if model supports predict_proba)
+            priority = priority_mapping.get(prediction, str(prediction))
+
+            # ----------------------------
+            # Display Priority Result
+            # ----------------------------
+            if priority.lower() == "high":
+                st.error("🔴 **Priority: HIGH** — Requires immediate attention.")
+            elif priority.lower() == "medium":
+                st.warning("🟠 **Priority: MEDIUM** — Should be reviewed soon.")
+            elif priority.lower() == "low":
+                st.success("🟢 **Priority: LOW** — Can be handled later.")
+            else:
+                st.info(f"Prediction: {priority}")
+
+            # Optional: show confidence (if available)
             if hasattr(model, "predict_proba"):
                 prob = model.predict_proba(input_vec).max() * 100
                 st.progress(int(prob))
-                st.info(f"Confidence: {prob:.2f}%")
+                st.caption(f"Confidence: {prob:.2f}%")
 
         except Exception as e:
             st.error(f"⚠️ Error during prediction: {e}")
